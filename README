@@ -1,6 +1,10 @@
 Uniweb Project
 
-Project aims at reconsideration of POSIX and
-implementation of the operating system based on
-Web using HTML 5's SVG extension for rendering
-documents written in LaTeX/MetaPost.
+Minimal POSIX implementation as a strict conforming POSIX
+application to get a test suite for checking strict conforming
+POSIX applications.
+
+The project aims at reconsideration of POSIX and implementation
+of the operating system based on POSIX itself with the only end
+user interface being Web using HTML 5's SVG extension for
+rendering documents written in LaTeX/MetaPost.
