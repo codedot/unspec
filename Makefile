@@ -1,4 +1,4 @@
-all: simple.o complete.o
+all: parser.o
 
 clean:
 	-rm -f *.o
