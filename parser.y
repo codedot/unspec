@@ -1,14 +1,23 @@
-%token WORD ASSIGNMENT_WORD NAME NEWLINE IO_NUMBER
-%token AND_IF OR_IF DSEMI
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH
-%token CLOBBER
+%{
+#include <stdio.h>
+%}
+
+%union {
+	char *word;
+}
+
+%token <word> WORD ASSIGNMENT_WORD IO_NUMBER
+%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
 
 %%
 
 simple_command: cmd_name | cmd_name cmd_suffix | cmd_prefix |
 	cmd_prefix cmd_word | cmd_prefix cmd_word cmd_suffix;
 
-cmd_name: WORD;
+cmd_name: WORD {
+	printf("Command name is \"%s\".\n", $1);
+	free($1);
+};
 
 cmd_word: WORD;
 
