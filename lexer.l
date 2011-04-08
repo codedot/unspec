@@ -11,6 +11,14 @@ WORD [[:alnum:]]+
 
 #.*|[ \t\n]+
 
+\<\< return DLESS;
+\>\> return DGREAT;
+\<& return LESSAND;
+\>& return GREATAND;
+\<\> return LESSGREAT;
+\<\<- return DLESSDASH;
+\>\| return CLOBBER;
+
 {WORD} {
 	char *word = strdup(yytext);
 
