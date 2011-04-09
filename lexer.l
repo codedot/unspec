@@ -5,7 +5,7 @@
 #include <stdlib.h>
 %}
 
-WORD [[:alnum:]]+
+WORD [^# \t\n=<>]+
 
 %%
 

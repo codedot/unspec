@@ -1,8 +1,11 @@
 %{
+#include "command.h"
+
 #include <stdio.h>
 %}
 
 %union {
+	struct command *command;
 	char *word;
 }
 
@@ -15,8 +18,7 @@ simple_command: cmd_name | cmd_name cmd_suffix | cmd_prefix |
 	cmd_prefix cmd_word | cmd_prefix cmd_word cmd_suffix;
 
 cmd_name: WORD {
-	printf("Command name is \"%s\".\n", $1);
-	free($1);
+	cmdname($1);
 };
 
 cmd_word: WORD;
@@ -24,8 +26,11 @@ cmd_word: WORD;
 cmd_prefix: io_redirect | cmd_prefix io_redirect |
 	ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD;
 
-cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD |
-	cmd_suffix WORD;
+cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD {
+	firstarg($1);
+}; | cmd_suffix WORD {
+	lastarg($2);
+};
 
 io_redirect: io_file | IO_NUMBER io_file | io_here |
 	IO_NUMBER io_here;
