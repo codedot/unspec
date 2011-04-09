@@ -3,28 +3,54 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-void issuecmd(char *path, struct command *command)
+struct cmd *firstarg(char *arg)
 {
-	assert(path);
-	printf("The command name is \"%s\".\n", path);
-	free(path);
+	struct cmd *cmd = (struct cmd *)malloc(sizeof *cmd);
+	char **argv = (char **)calloc(sizeof *argv, 3);
+	char **envp = (char **)calloc(sizeof *envp, 1);
+	
+	oomtest(cmd, "malloc");
+	oomtest(argv, "calloc");
+	oomtest(envp, "calloc");
+	cmd->argv = argv;
+	cmd->envp = envp;
+
+	assert(arg);
+	argv[0] = strdup("");
+	argv[1] = arg;
+
+	return cmd;
 }
 
-struct command *firstarg(char *arg)
+struct cmd *lastarg(struct cmd *cmd, char *arg)
 {
-	assert(arg);
-	printf("The first argument is \"%s\".\n", arg);
-	free(arg);
+	char **argv;
+	int argc;
 
-	return NULL;
+	assert(cmd);
+	argv = cmd->argv;
+	argc = countarg(argv);
+
+	assert(arg);
+	argv[argc] = arg;
+
+	++argc;
+	argv = (char **)realloc(argv, (argc + 1) * sizeof arg);
+	argv[argc] = NULL;
+	cmd->argv = argv;
+
+	return cmd;
 }
 
-struct command *lastarg(struct command *command, char *arg)
+int countarg(char **argv)
 {
-	assert(arg);
-	printf("The last argument is \"%s\".\n", arg);
-	free(arg);
+	int i, argc = 0;
 
-	return command;
+	assert(argv);
+	for (i = 0; argv[i]; i++)
+		++argc;
+
+	return argc;
 }

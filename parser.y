@@ -6,14 +6,14 @@
 %}
 
 %union {
-	struct command *command;
+	struct cmd *cmd;
 	char *word;
 }
 
 %token <word> WORD ASSIGNMENT_WORD IO_NUMBER
 %token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
 
-%type <command> cmd_suffix
+%type <cmd> cmd_suffix
 %type <word> cmd_name
 
 %%

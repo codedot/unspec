@@ -1,12 +1,13 @@
 #ifndef _COMMAND_H
 #define _COMMAND_H
 
-struct command {
+struct cmd {
 	char **argv, **envp;
 };
 
-void issuecmd(char *path, struct command *command);
-struct command *firstarg(char *arg);
-struct command *lastarg(struct command *command, char *arg);
+void oomtest(const void *ptr, const char *str);
+void issuecmd(char *path, struct cmd *cmd);
+struct cmd *firstarg(char *arg);
+struct cmd *lastarg(struct cmd *cmd, char *arg);
 
 #endif

@@ -1,8 +1,9 @@
 YFLAGS = -d
 OBJS = \
 	argv.o \
-	parser.o \
-	lexer.o
+	execve.o \
+	lexer.o \
+	parser.o
 
 all: sh
 	echo echo hello world | ./sh

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 %}
 
 WORD [^# \t\n=<>]+
@@ -22,12 +23,9 @@ WORD [^# \t\n=<>]+
 {WORD} {
 	char *word = strdup(yytext);
 
-	if (!word) {
-		perror("strdup");
-		exit(EXIT_FAILURE);
-	}
-
+	oomtest(word, "strdup");
 	yylval.word = word;
+
 	return WORD;
 }
 
