@@ -5,8 +5,8 @@ struct command {
 	char **argv, **envp;
 };
 
-void cmdname(char *path);
-void firstarg(char *arg);
-void lastarg(char *arg);
+void issuecmd(char *path, struct command *command);
+struct command *firstarg(char *arg);
+struct command *lastarg(struct command *command, char *arg);
 
 #endif
