@@ -35,9 +35,9 @@ cmd_prefix: io_redirect | cmd_prefix io_redirect {
 cmd_suffix: io_redirect {
 	$$ = NULL;
 } | cmd_suffix io_redirect | WORD {
-	$$ = firstarg($1);
+	$$ = addarg(NULL, $1);
 } | cmd_suffix WORD {
-	$$ = lastarg($1, $2);
+	$$ = addarg($1, $2);
 };
 
 io_redirect: io_file | IO_NUMBER io_file | io_here {

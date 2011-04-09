@@ -14,32 +14,33 @@ void oomtest(const void *ptr, const char *str)
 	}
 }
 
-void issuecmd(char *path, struct cmd *cmd)
+void issuecmd(char *name, struct cmd *cmd)
 {
-	int i;
-	char **argv, **envp;
+	int i, argc;
+	char **argv;
 
-	assert(path);
+	if (!cmd)
+		cmd = newcmd();
+
 	assert(cmd);
 	argv = cmd->argv;
-	envp = cmd->envp;
+
+	assert(argv);
+	assert(name);
+	argv[0] = name;
 
 	if (!fork()) {
-		execve(path, cmd->argv, cmd->envp);
-		perror("execve");
+		execvp(name, argv);
+		perror("execvp");
 		exit(EXIT_FAILURE);
 	}
 
 	wait(NULL);
 
-	for (i = 0; argv[i]; i++)
+	argc = countarg(argv);
+	for (i = 0; i < argc; i++)
 		free(argv[i]);
+
 	free(argv);
-
-	for (i = 0; envp[i]; i++)
-		free(envp[i]);
-	free(envp);
-
 	free(cmd);
-	free(path);
 }

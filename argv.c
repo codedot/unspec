@@ -5,29 +5,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct cmd *firstarg(char *arg)
+struct cmd *newcmd(void)
 {
 	struct cmd *cmd = (struct cmd *)malloc(sizeof *cmd);
-	char **argv = (char **)calloc(sizeof *argv, 3);
-	char **envp = (char **)calloc(sizeof *envp, 1);
+	char **argv = (char **)calloc(sizeof *argv, 2);
 	
 	oomtest(cmd, "malloc");
 	oomtest(argv, "calloc");
-	oomtest(envp, "calloc");
+	argv[0] = "";
 	cmd->argv = argv;
-	cmd->envp = envp;
-
-	assert(arg);
-	argv[0] = strdup("");
-	argv[1] = arg;
 
 	return cmd;
 }
 
-struct cmd *lastarg(struct cmd *cmd, char *arg)
+struct cmd *addarg(struct cmd *cmd, char *arg)
 {
 	char **argv;
 	int argc;
+
+	if (!cmd)
+		cmd = newcmd();
 
 	assert(cmd);
 	argv = cmd->argv;
@@ -46,10 +43,10 @@ struct cmd *lastarg(struct cmd *cmd, char *arg)
 
 int countarg(char **argv)
 {
-	int i, argc = 0;
+	int argc = 0;
 
 	assert(argv);
-	for (i = 0; argv[i]; i++)
+	while (argv[argc])
 		++argc;
 
 	return argc;

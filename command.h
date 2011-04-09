@@ -2,12 +2,12 @@
 #define _COMMAND_H
 
 struct cmd {
-	char **argv, **envp;
+	char **argv;
 };
 
 void oomtest(const void *ptr, const char *str);
-void issuecmd(char *path, struct cmd *cmd);
-struct cmd *firstarg(char *arg);
-struct cmd *lastarg(struct cmd *cmd, char *arg);
+void issuecmd(char *name, struct cmd *cmd);
+struct cmd *newcmd(void);
+struct cmd *addarg(struct cmd *cmd, char *arg);
 
 #endif

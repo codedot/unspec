@@ -6,11 +6,14 @@ OBJS = \
 	parser.o
 
 all: sh
-	echo `which echo` hello world | ./sh
+	echo date | ./sh
+	echo echo hello world | ./sh
 
 sh: $(OBJS)
 
 lexer.o: parser.o
+
+$(OBJS): command.h
 
 clean:
 	-rm -f y.* *.o sh
