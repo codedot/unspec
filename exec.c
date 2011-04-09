@@ -5,13 +5,17 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-void oomtest(const void *ptr, const char *str)
+struct cmd *newcmd(void)
 {
-	if (!ptr) {
-		assert(str);
-		perror(str);
-		exit(EXIT_FAILURE);
-	}
+	struct cmd *cmd = (struct cmd *)malloc(sizeof *cmd);
+	char **argv = (char **)calloc(sizeof *argv, 2);
+	
+	oomtest(cmd, "malloc");
+	oomtest(argv, "calloc");
+	argv[0] = "";
+	cmd->argv = argv;
+
+	return cmd;
 }
 
 void issuecmd(char *name, struct cmd *cmd)

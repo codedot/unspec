@@ -5,17 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct cmd *newcmd(void)
+void oomtest(const void *ptr, const char *str)
 {
-	struct cmd *cmd = (struct cmd *)malloc(sizeof *cmd);
-	char **argv = (char **)calloc(sizeof *argv, 2);
-	
-	oomtest(cmd, "malloc");
-	oomtest(argv, "calloc");
-	argv[0] = "";
-	cmd->argv = argv;
-
-	return cmd;
+	if (!ptr) {
+		assert(str);
+		perror(str);
+		exit(EXIT_FAILURE);
+	}
 }
 
 struct cmd *addarg(struct cmd *cmd, char *arg)
