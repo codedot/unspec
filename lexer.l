@@ -12,12 +12,14 @@ WORD [^# \t\n=<>]+
 
 #.*|[ \t\n]+
 
-\<\< return DLESS;
-\>\> return DGREAT;
-\<& return LESSAND;
-\>& return GREATAND;
-\<\> return LESSGREAT;
-\<\<- return DLESSDASH;
+\< return LE;
+\> return GR;
+\<\< return LELE;
+\>\> return GRGR;
+\<& return LEAND;
+\>& return GRAND;
+\<\> return LEGR;
+\<\<- return LELEDASH;
 \>\| return CLOBBER;
 
 {WORD} {

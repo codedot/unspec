@@ -10,45 +10,39 @@
 	char *word;
 }
 
-%token <word> WORD ASSIGNMENT_WORD IO_NUMBER
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
+%token <word> WORD ASSIGN IONUM
+%token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER
 
-%type <cmd> cmd_suffix
-%type <word> cmd_name
+%type <cmd> suffix
+%type <word> name
 
 %%
 
-simple_command: cmd_name {
+command: name {
 	issuecmd($1, NULL);
-} | cmd_name cmd_suffix {
+} | name suffix {
 	issuecmd($1, $2);
-} | cmd_prefix | cmd_prefix cmd_word {
-} | cmd_prefix cmd_word cmd_suffix;
+} | prefix | prefix name | prefix name suffix;
 
-cmd_name: WORD;
+name: WORD;
 
-cmd_word: WORD;
+prefix: redir | prefix redir | ASSIGN | prefix ASSIGN;
 
-cmd_prefix: io_redirect | cmd_prefix io_redirect {
-} | ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD;
-
-cmd_suffix: io_redirect {
+suffix: redir {
 	$$ = NULL;
-} | cmd_suffix io_redirect | WORD {
+} | suffix redir | WORD {
 	$$ = addarg(NULL, $1);
-} | cmd_suffix WORD {
+} | suffix WORD {
 	$$ = addarg($1, $2);
 };
 
-io_redirect: io_file | IO_NUMBER io_file | io_here {
-} | IO_NUMBER io_here;
+redir: iofile | IONUM iofile | iohere | IONUM iohere;
 
-io_file: '<' filename | LESSAND filename | '>' filename {
-} | GREATAND filename | DGREAT filename | LESSGREAT filename {
-} | CLOBBER filename;
+iofile: LE file | LEAND file | GR file | GRAND file {
+} | GRGR file | LEGR file | CLOBBER file;
 
-filename: WORD;
+file: WORD;
 
-io_here: DLESS here_end | DLESSDASH here_end;
+iohere: LELE hereend | LELEDASH hereend;
 
-here_end: WORD;
+hereend: WORD;
