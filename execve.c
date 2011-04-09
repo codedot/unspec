@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
 void oomtest(const void *ptr, const char *str)
 {
@@ -28,6 +29,8 @@ void issuecmd(char *path, struct cmd *cmd)
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
+
+	wait(NULL);
 
 	for (i = 0; argv[i]; i++)
 		free(argv[i]);

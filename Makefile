@@ -6,7 +6,7 @@ OBJS = \
 	parser.o
 
 all: sh
-	echo echo hello world | ./sh
+	echo `which echo` hello world | ./sh
 
 sh: $(OBJS)
 
