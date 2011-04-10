@@ -18,10 +18,27 @@ struct cmd *newcmd(void)
 	return cmd;
 }
 
+static void delcmd(struct cmd *cmd)
+{
+	char **argv;
+	int i, argc;
+
+	assert(cmd);
+	argv = cmd->argv;
+
+	assert(argv);
+	argc = arraylen(argv);
+	for (i = 0; i < argc; i++)
+		free(argv[i]);
+
+	free(argv);
+	free(cmd);
+}
+
 void issuecmd(char *name, struct cmd *cmd)
 {
-	int i, argc;
 	char **argv;
+	int i, argc;
 
 	if (!cmd)
 		cmd = newcmd();
@@ -37,14 +54,8 @@ void issuecmd(char *name, struct cmd *cmd)
 		execvp(name, argv);
 		perror("execvp");
 		exit(EXIT_FAILURE);
+	} else {
+		delcmd(cmd);
+		wait(NULL);
 	}
-
-	wait(NULL);
-
-	argc = countarg(argv);
-	for (i = 0; i < argc; i++)
-		free(argv[i]);
-
-	free(argv);
-	free(cmd);
 }

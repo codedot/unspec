@@ -9,5 +9,6 @@ void oomtest(const void *ptr, const char *str);
 void issuecmd(char *name, struct cmd *cmd);
 struct cmd *newcmd(void);
 struct cmd *addarg(struct cmd *cmd, char *arg);
+int arraylen(char **array);
 
 #endif

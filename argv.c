@@ -24,7 +24,7 @@ struct cmd *addarg(struct cmd *cmd, char *arg)
 
 	assert(cmd);
 	argv = cmd->argv;
-	argc = countarg(argv);
+	argc = arraylen(argv);
 
 	assert(arg);
 	argv[argc] = arg;
@@ -37,13 +37,13 @@ struct cmd *addarg(struct cmd *cmd, char *arg)
 	return cmd;
 }
 
-int countarg(char **argv)
+int arraylen(char **array)
 {
-	int argc = 0;
+	int len = 0;
 
-	assert(argv);
-	while (argv[argc])
-		++argc;
+	assert(array);
+	while (array[len])
+		++len;
 
-	return argc;
+	return len;
 }
