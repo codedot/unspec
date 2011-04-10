@@ -6,6 +6,7 @@
 #include <string.h>
 %}
 
+ASSIGN [^# \t\n<>]+=[^# \t\n<>]*
 WORD [^# \t\n=<>]+
 
 %%
@@ -21,6 +22,15 @@ WORD [^# \t\n=<>]+
 \<\> return LEGR;
 \<\<- return LELEDASH;
 \>\| return CLOBBER;
+
+{ASSIGN} {
+	char *word = strdup(yytext);
+
+	oomtest(word, "strdup");
+	yylval.word = word;
+
+	return ASSIGN;
+}
 
 {WORD} {
 	char *word = strdup(yytext);
