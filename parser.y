@@ -6,37 +6,44 @@
 %}
 
 %union {
-	struct cmd *cmd;
+	char **argv, **envp;
 	char *word;
 }
 
 %token <word> WORD ASSIGN IONUM
 %token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER
 
-%type <cmd> suffix
+%type <envp> prefix
 %type <word> name
+%type <argv> suffix
 
 %%
 
 command: name {
-	issuecmd($1, NULL);
+	issuecmd($1, NULL, NULL);
 } | name suffix {
-	issuecmd($1, $2);
-} | prefix | prefix name | prefix name suffix;
+	issuecmd($1, $2, NULL);
+} | prefix | prefix name {
+	issuecmd($2, NULL, $1);
+} | prefix name suffix {
+	issuecmd($2, $3, $1);
+};
 
 name: WORD;
 
-prefix: redir | prefix redir | ASSIGN | prefix ASSIGN;
+prefix: /* redir | prefix redir | */ ASSIGN {
+	$$ = addvar(NULL, $1);
+} | prefix ASSIGN {
+	$$ = addvar($1, $2);
+};
 
-suffix: redir {
-	$$ = NULL;
-} | suffix redir | WORD {
+suffix: /* redir | suffix redir | */ WORD {
 	$$ = addarg(NULL, $1);
 } | suffix WORD {
 	$$ = addarg($1, $2);
 };
 
-redir: iofile | IONUM iofile | iohere | IONUM iohere;
+/* redir: iofile | IONUM iofile | iohere | IONUM iohere;
 
 iofile: LE file | LEAND file | GR file | GRAND file {
 } | GRGR file | LEGR file | CLOBBER file;
@@ -45,4 +52,4 @@ file: WORD;
 
 iohere: LELE hereend | LELEDASH hereend;
 
-hereend: WORD;
+hereend: WORD; */

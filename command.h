@@ -1,14 +1,12 @@
 #ifndef _COMMAND_H
 #define _COMMAND_H
 
-struct cmd {
-	char **argv;
-};
-
 void oomtest(const void *ptr, const char *str);
-void issuecmd(char *name, struct cmd *cmd);
-struct cmd *newcmd(void);
-struct cmd *addarg(struct cmd *cmd, char *arg);
+void issuecmd(char *name, char **argv, char **envp);
 int arraylen(char **array);
+char **newargv(void);
+char **addarg(char **argv, char *arg);
+char **newenvp(void);
+char **addvar(char **envp, char *var);
 
 #endif

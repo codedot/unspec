@@ -3,12 +3,11 @@ OBJS = \
 	argv.o \
 	exec.o \
 	lexer.o \
-	parser.o
+	parser.o \
+	var.o
 
 all: sh test
-	echo date +%m/%d-%H%M | ./sh
-	echo echo hello world | ./sh
-	echo ./test 1 2 3 4 5 | ./sh
+	echo ./test hello world | ./sh
 
 sh: $(OBJS)
 

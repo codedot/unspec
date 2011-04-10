@@ -14,29 +14,6 @@ void oomtest(const void *ptr, const char *str)
 	}
 }
 
-struct cmd *addarg(struct cmd *cmd, char *arg)
-{
-	char **argv;
-	int argc;
-
-	if (!cmd)
-		cmd = newcmd();
-
-	assert(cmd);
-	argv = cmd->argv;
-	argc = arraylen(argv);
-
-	assert(arg);
-	argv[argc] = arg;
-
-	++argc;
-	argv = (char **)realloc(argv, (argc + 1) * sizeof arg);
-	argv[argc] = NULL;
-	cmd->argv = argv;
-
-	return cmd;
-}
-
 int arraylen(char **array)
 {
 	int len = 0;
@@ -46,4 +23,29 @@ int arraylen(char **array)
 		++len;
 
 	return len;
+}
+
+char **newargv(void)
+{
+	char **argv = (char **)calloc(sizeof *argv, 2);
+	
+	oomtest(argv, "calloc");
+	argv[0] = "";
+
+	return argv;
+}
+
+char **addarg(char **argv, char *arg)
+{
+	int argc;
+
+	if (!argv)
+		argv = newargv();
+
+	argc = arraylen(argv) + 1;
+	argv = (char **)realloc(argv, (argc + 1) * sizeof arg);
+	argv[argc - 1] = arg;
+	argv[argc] = NULL;
+
+	return argv;
 }
