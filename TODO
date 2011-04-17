@@ -1,0 +1,5 @@
+Merge redirection symbols and I/O number into one token.
+Process escape sequences.
+Check variable names.
+Return a WORD token instead of ASSIGN after the command name.
+Search PATH variable for an executable file.
