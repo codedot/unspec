@@ -16,7 +16,9 @@
 
 %%
 
-command: prefix NEWLINE | prefix WORD suffix NEWLINE {
+command: prefix NEWLINE {
+	exit(EXIT_SUCCESS);
+} | prefix WORD suffix NEWLINE {
 	issuecmd($2, $3, $1);
 };
 
