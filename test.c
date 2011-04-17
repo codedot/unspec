@@ -3,8 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-	char buf[BUFSIZ];
 	extern char **environ;
+	char buf[BUFSIZ];
 	int i;
 
 	for (i = 0; environ[i]; i++)

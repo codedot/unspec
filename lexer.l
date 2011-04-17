@@ -6,13 +6,14 @@
 #include <string.h>
 %}
 
-ASSIGN [^# \t\n<>]+=[^# \t\n<>]*
-WORD [^# \t\n=<>]+
+ASSIGN [^# \t\n<>&]+=[^# \t\n<>&]*
+WORD [^# \t\n=<>&]+
 
 %%
 
-#.*|[ \t\n]+
+#.*|[ \t]+
 
+\n return NEWLINE;
 \< return LE;
 \> return GR;
 \<\< return LELE;

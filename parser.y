@@ -10,13 +10,13 @@
 }
 
 %token <word> WORD ASSIGN IONUM
-%token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER
+%token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER NEWLINE
 
 %type <vec> prefix suffix
 
 %%
 
-command: prefix WORD suffix {
+command: prefix WORD suffix NEWLINE {
 	issuecmd($2, $3, $1);
 };
 
@@ -32,12 +32,19 @@ suffix: {
 	$$ = addarg($1, $2);
 };
 
-redir: iofile /* | IONUM iofile | iohere | IONUM iohere */;
+redir: iofile | IONUM iofile | iohere | IONUM iohere;
 
 iofile: LE WORD {
 	openin($2);
-} /* | LEAND WORD */ | GR WORD {
+} | GR WORD {
 	openout($2);
-} /* | GRAND WORD | GRGR WORD | LEGR WORD | CLOBBER WORD */;
+} | GRGR WORD {
+} | LEGR WORD {
+} | CLOBBER WORD {
+} | LEAND WORD {
+} | GRAND WORD {
+};
 
-/* iohere: LELE WORD | LELEDASH WORD; */
+iohere: LELE WORD {
+} | LELEDASH WORD {
+};
