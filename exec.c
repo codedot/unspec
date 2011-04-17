@@ -1,21 +1,32 @@
 #include "command.h"
 
 #include <assert.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 
-static void delarray(char **array)
+static int fdout = -1;
+
+void openout(char *file)
 {
-	int i, len;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-	assert(array);
-	len = arraylen(array);
+	if (-1 != fdout) {
+		if (close(fdout)) {
+			perror("close");
+			exit(EXIT_FAILURE);
+		}
+		fdout = -1;
+	}
 
-	for (i = 0; i < len; i++)
-		free(array[i]);
+	fdout = creat(file, mode);
+	if (-1 == fdout) {
+		perror("creat");
+		exit(EXIT_FAILURE);
+	}
 
-	free(array);
+	free(file);
 }
 
 void issuecmd(char *name, char **argv, char **envp)
@@ -30,13 +41,9 @@ void issuecmd(char *name, char **argv, char **envp)
 	assert(name);
 	argv[0] = name;
 
-	if (!fork()) {
-		execve(name, argv, envp);
-		perror("execve");
-		exit(EXIT_FAILURE);
-	} else {
-		delarray(argv);
-		delarray(envp);
-		wait(NULL);
-	}
+	dup2(fdout, 1);
+	close(fdout);
+	execve(name, argv, envp);
+	perror("execve");
+	exit(EXIT_FAILURE);
 }
