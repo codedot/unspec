@@ -40,6 +40,4 @@ iofile: LE WORD {
 	openout($2);
 } /* | GRAND WORD | GRGR WORD | LEGR WORD | CLOBBER WORD */;
 
-/* iohere: LELE hereend | LELEDASH hereend;
-
-hereend: WORD; */
+/* iohere: LELE WORD | LELEDASH WORD; */
