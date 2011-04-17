@@ -8,14 +8,16 @@
 %union {
 	char **argv, **envp;
 	char *word;
+	void **unused;
 }
 
 %token <word> WORD ASSIGN IONUM
-%token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER
+%token <unused> LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER
 
 %type <envp> prefix
-%type <word> name
+%type <word> name file
 %type <argv> suffix
+%type <unused> redir iofile
 
 %%
 
@@ -49,8 +51,8 @@ suffix: redir {
 
 redir: iofile /* | IONUM iofile | iohere | IONUM iohere */;
 
-iofile: LE file /* | LEAND file */ | GR file /* | GRAND file {
-} | GRGR file | LEGR file | CLOBBER file */;
+iofile: LE file /* | LEAND file */ | GR file {
+} /* | GRAND file | GRGR file | LEGR file | CLOBBER file */;
 
 file: WORD;
 
