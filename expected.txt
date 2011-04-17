@@ -3,3 +3,9 @@ environ[1] == PATH=.:/bin
 argv[0] == ./test
 argv[1] == hello
 argv[2] == world
+stdin:
+	Hello World!
+	
+	This is just a test input file.
+	
+	That is all.

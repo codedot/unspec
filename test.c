@@ -3,6 +3,7 @@
 
 int main(int argc, char *argv[])
 {
+	char buf[BUFSIZ];
 	extern char **environ;
 	int i;
 
@@ -11,6 +12,10 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < argc; i++)
 		printf("argv[%d] == %s\n", i, argv[i]);
+
+	printf("stdin:\n");
+	while (fgets(buf, BUFSIZ, stdin))
+		printf("\t%s", buf);
 
 	return 0;
 }

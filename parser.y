@@ -51,7 +51,9 @@ suffix: redir {
 
 redir: iofile /* | IONUM iofile | iohere | IONUM iohere */;
 
-iofile: LE file /* | LEAND file */ | GR file {
+iofile: LE file {
+	openin($2);
+} /* | LEAND file */ | GR file {
 	openout($2);
 } /* | GRAND file | GRGR file | LEGR file | CLOBBER file */;
 
