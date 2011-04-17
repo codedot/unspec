@@ -31,25 +31,29 @@ command: name {
 
 name: WORD;
 
-prefix: /* redir | prefix redir | */ ASSIGN {
+prefix: redir {
+	$$ = NULL;
+} | prefix redir | ASSIGN {
 	$$ = addvar(NULL, $1);
 } | prefix ASSIGN {
 	$$ = addvar($1, $2);
 };
 
-suffix: /* redir | suffix redir | */ WORD {
+suffix: redir {
+	$$ = NULL;
+} | suffix redir | WORD {
 	$$ = addarg(NULL, $1);
 } | suffix WORD {
 	$$ = addarg($1, $2);
 };
 
-/* redir: iofile | IONUM iofile | iohere | IONUM iohere;
+redir: iofile /* | IONUM iofile | iohere | IONUM iohere */;
 
-iofile: LE file | LEAND file | GR file | GRAND file {
-} | GRGR file | LEGR file | CLOBBER file;
+iofile: LE file /* | LEAND file */ | GR file /* | GRAND file {
+} | GRGR file | LEGR file | CLOBBER file */;
 
 file: WORD;
 
-iohere: LELE hereend | LELEDASH hereend;
+/* iohere: LELE hereend | LELEDASH hereend;
 
 hereend: WORD; */

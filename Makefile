@@ -7,7 +7,8 @@ OBJS = \
 	var.o
 
 all: sh test
-	echo FOO=bar PATH=.:/bin ./test hello world | ./sh
+	echo 'FOO=bar >output PATH=.:/bin' \
+		'./test hello <input world' | ./sh
 
 sh: $(OBJS)
 
