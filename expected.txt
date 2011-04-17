@@ -1,0 +1,5 @@
+environ[0] == FOO=bar
+environ[1] == PATH=.:/bin
+argv[0] == ./test
+argv[1] == hello
+argv[2] == world
