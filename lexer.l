@@ -6,8 +6,9 @@
 #include <string.h>
 %}
 
-ASSIGN [^# \t\n<>&]+=[^# \t\n<>&]*
-WORD [^# \t\n=<>&]+
+ASSIGN [_a-zA-Z][0-9_a-zA-Z]*=[^# \t\n<>&]*
+UNSPEC [^# \t\n=<>&]*=[^# \t\n<>&]*
+WORD [^# \t\n<>&][^# \t\n=<>&]*
 
 %%
 
@@ -32,6 +33,11 @@ WORD [^# \t\n=<>&]+
 	yylval.word = word;
 
 	return ASSIGN;
+}
+
+{UNSPEC} {
+	fprintf(stderr, "Unspecified: XCU 2.10.2 7b\n");
+	exit(EXIT_FAILURE);
 }
 
 {WORD} {
