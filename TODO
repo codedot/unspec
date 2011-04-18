@@ -1,5 +1,0 @@
-Search PATH variable for an executable file.
-Check variable names to match XBD 3.230.
-Merge redirection symbols and I/O number into one token.
-Return a WORD token instead of ASSIGN after the command name.
-Process escape sequences and word expansions.
