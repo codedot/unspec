@@ -24,7 +24,6 @@ void openin(char *file)
 		perror(file);
 		exit(EXIT_FAILURE);
 	}
-
 	free(file);
 }
 
@@ -40,11 +39,11 @@ void openout(char *file)
 		fdout = -1;
 	}
 
+	assert(file);
 	fdout = creat(file, mode);
 	if (-1 == fdout) {
 		perror(file);
 		exit(EXIT_FAILURE);
 	}
-
 	free(file);
 }
