@@ -36,8 +36,12 @@ WORD [^# \t\n<>&][^# \t\n=<>&]*
 }
 
 {UNSPEC} {
-	fprintf(stderr, "Unspecified: XCU 2.10.2 7b\n");
-	exit(EXIT_FAILURE);
+	char *word = strdup(yytext);
+
+	oomtest(word, "strdup");
+	yylval.word = word;
+
+	return UNSPEC;
 }
 
 {WORD} {
