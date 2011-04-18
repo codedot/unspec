@@ -1,5 +1,6 @@
 #include "command.h"
 
+#include <assert.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,9 +18,10 @@ void openin(char *file)
 		fdin = -1;
 	}
 
+	assert(file);
 	fdin = open(file, O_RDONLY);
 	if (-1 == fdin) {
-		perror("open");
+		perror(file);
 		exit(EXIT_FAILURE);
 	}
 
@@ -40,7 +42,7 @@ void openout(char *file)
 
 	fdout = creat(file, mode);
 	if (-1 == fdout) {
-		perror("creat");
+		perror(file);
 		exit(EXIT_FAILURE);
 	}
 
