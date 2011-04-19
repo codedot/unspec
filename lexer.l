@@ -1,9 +1,9 @@
 %{
 #include "y.tab.h"
 
-#include <stdio.h>
+#include "command.h"
+
 #include <stdlib.h>
-#include <string.h>
 %}
 
 ASSIGN [_a-zA-Z][0-9_a-zA-Z]*=[^# \t\n<>&]*
@@ -14,43 +14,32 @@ WORD [^# \t\n<>&][^# \t\n=<>&]*
 
 #.*|[ \t]+
 
-\n return NEWLINE;
+[0-9]+/[<>] {
+	yylval.num = atoi(yytext);
+	return IONUM;
+}
 
-\< return LE;
-\> return GR;
-\<\< return LELE;
-\>\> return GRGR;
-\<& return LEAND;
-\>& return GRAND;
-\<\> return LEGR;
-\<\<- return LELEDASH;
-\>\| return CLOBBER;
+"<<" return LELE;
+">>" return GRGR;
+"<&" return LEAND;
+">&" return GRAND;
+"<>" return LEGR;
+"<<-" return LELEDASH;
+">|" return CLOBBER;
 
 {ASSIGN} {
-	char *word = strdup(yytext);
-
-	oomtest(word, "strdup");
-	yylval.word = word;
-
+	yylval.word = copyword(yytext);
 	return ASSIGN;
 }
 
 {UNSPEC} {
-	char *word = strdup(yytext);
-
-	oomtest(word, "strdup");
-	yylval.word = word;
-
+	yylval.word = copyword(yytext);
 	return UNSPEC;
 }
 
 {WORD} {
-	char *word = strdup(yytext);
-
-	oomtest(word, "strdup");
-	yylval.word = word;
-
+	yylval.word = copyword(yytext);
 	return WORD;
 }
 
-. return yytext[0];
+\n|. return yytext[0];

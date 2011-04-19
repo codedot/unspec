@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
@@ -17,5 +18,6 @@ int yywrap(void)
 int yyerror(const char *msg)
 {
 	fprintf(stderr, "%s\n", msg);
+	exit(EXIT_FAILURE);
 	return 0;
 }

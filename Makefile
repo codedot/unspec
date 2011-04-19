@@ -3,6 +3,7 @@ OBJS = \
 	argv.o \
 	exec.o \
 	lexer.o \
+	misc.o \
 	open.o \
 	parser.o \
 	var.o

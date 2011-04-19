@@ -8,7 +8,7 @@
 int fdin = -1;
 int fdout = -1;
 
-void openin(char *file)
+static void openin(char *file)
 {
 	if (-1 != fdin) {
 		if (close(fdin)) {
@@ -27,7 +27,7 @@ void openin(char *file)
 	free(file);
 }
 
-void openout(char *file)
+static void openout(char *file)
 {
 	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
@@ -46,4 +46,12 @@ void openout(char *file)
 		exit(EXIT_FAILURE);
 	}
 	free(file);
+}
+
+void openio(int num, int redir, char *file)
+{
+	if (OUTPUT == redir)
+		openout(file);
+	else if (INPUT == redir)
+		openin(file);
 }

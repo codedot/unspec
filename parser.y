@@ -6,52 +6,59 @@
 %}
 
 %union {
+	int num;
 	char *word, **vec;
 }
 
-%token <word> WORD UNSPEC ASSIGN IONUM
-%token LE GR LELE GRGR LEAND GRAND LEGR LELEDASH CLOBBER NEWLINE
-
-%type <vec> prefix suffix
-%type <word> arg
+%token <num> IONUM LEGR GRGR LELE LELEDASH LEAND GRAND CLOBBER
+%token <word> WORD UNSPEC ASSIGN
 
 %%
 
-command: prefix NEWLINE {
+command: prefix '\n' {
 	exit(EXIT_SUCCESS);
-} | prefix WORD suffix NEWLINE {
-	issuecmd($2, $3, $1);
+} | prefix WORD suffix '\n' {
+	issuecmd($2, $<vec>3, $<vec>1);
 };
 
 prefix: {
-	$$ = NULL;
+	$<vec>$ = NULL;
 } | prefix redir | prefix UNSPEC {
-	fprintf(stderr, "Unspecified: XCU 2.10.2 7b\n");
+	unspec("XCU 2.10.2 7b");
 } | prefix ASSIGN {
-	$$ = addvar($1, $2);
+	$<vec>$ = addvar($<vec>1, $2);
 };
 
 suffix: {
-	$$ = NULL;
+	$<vec>$ = NULL;
 } | suffix redir | suffix arg {
-	$$ = addarg($1, $2);
+	$<vec>$ = addarg($<vec>1, $<word>2);
 };
 
 arg: WORD | ASSIGN | UNSPEC;
 
-redir: iofile | IONUM iofile | iohere | IONUM iohere;
-
-iofile: LE WORD {
-	openin($2);
-} | GR WORD {
-	openout($2);
-} | GRGR WORD {
-} | LEGR WORD {
-} | CLOBBER WORD {
-} | LEAND WORD {
-} | GRAND WORD {
+redir: redirsym WORD {
+	openio(-1, $<num>1, $2);
+} | IONUM redirsym WORD {
+	openio($1, $<num>2, $3);
 };
 
-iohere: LELE WORD {
-} | LELEDASH WORD {
+redirsym: '<' {
+	$<num>$ = INPUT;
+} | LEGR {
+	$<num>$ = INOUTPUT;
+} | '>' {
+	$<num>$ = OUTPUT;
+} | GRGR {
+	$<num>$ = APPEND;
+} | CLOBBER {
+	$<num>$ = FORCEOUT;
+} | LELE {
+	$<num>$ = HEREDOC;
+} | LELEDASH {
+	$<num>$ = HEREIND;
+} | LEAND {
+	$<num>$ = DUPIN;
+} | GRAND {
+	$<num>$ = DUPOUT;
 };
