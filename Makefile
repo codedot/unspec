@@ -11,7 +11,7 @@ OBJS = \
 all: sh test
 	echo 'FOO=bar >output.txt PATH=.:/bin' \
 		'./test hello <input.txt world' | ./sh
-	cmp output.txt expected.txt
+	cmp output.txt expect.txt
 
 sh: $(OBJS)
 
