@@ -1,22 +1,36 @@
-%token WORD ASSIGNMENT_WORD NAME NEWLINE IO_NUMBER
-%token AND_IF OR_IF DSEMI
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH
-%token CLOBBER
+%{
+#include "command.h"
+
+#include <stdio.h>
+%}
+
+%union {
+	struct command *command;
+	char *word;
+}
+
+%token <word> WORD ASSIGNMENT_WORD IO_NUMBER
+%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
 
 %%
 
 simple_command: cmd_name | cmd_name cmd_suffix | cmd_prefix |
 	cmd_prefix cmd_word | cmd_prefix cmd_word cmd_suffix;
 
-cmd_name: WORD;
+cmd_name: WORD {
+	cmdname($1);
+};
 
 cmd_word: WORD;
 
 cmd_prefix: io_redirect | cmd_prefix io_redirect |
 	ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD;
 
-cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD |
-	cmd_suffix WORD;
+cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD {
+	firstarg($1);
+}; | cmd_suffix WORD {
+	lastarg($2);
+};
 
 io_redirect: io_file | IO_NUMBER io_file | io_here |
 	IO_NUMBER io_here;
