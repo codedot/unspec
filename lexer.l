@@ -8,7 +8,10 @@ WORD [[:alpha:]][[:alnum:]]*
 
 #.*|[ \t\n]+ /* Ignore comments and spaces */
 
-{WORD} return WORD;
+{WORD} {
+	yylval.word = yytext;
+	return WORD;
+}
 
 \<\< return DLESS;
 \>\> return DGREAT;
