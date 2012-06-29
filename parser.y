@@ -1,3 +1,7 @@
+%{
+#include <stdio.h>
+%}
+
 %union {
 	/* String type for WORD token et al */
 	char *str;
@@ -13,15 +17,20 @@
 simple_command: cmd_name | cmd_name cmd_suffix | cmd_prefix |
 	cmd_prefix cmd_word | cmd_prefix cmd_word cmd_suffix;
 
-cmd_name: WORD;
+cmd_name: WORD {
+	printf("Command:\n\t%s\n", $1);
+};
 
 cmd_word: WORD;
 
 cmd_prefix: io_redirect | cmd_prefix io_redirect |
 	ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD;
 
-cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD |
-	cmd_suffix WORD;
+cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD {
+	printf("Arguments:\n\t%s\n", $1);
+} | cmd_suffix WORD {
+	printf("\t%s\n", $2);
+};
 
 io_redirect: io_file | IO_NUMBER io_file | io_here |
 	IO_NUMBER io_here;
