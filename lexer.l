@@ -6,8 +6,19 @@ WORD [[:alpha:]][[:alnum:]]*
 
 %%
 
-#.*|[ \t\n]+
+#.*|[ \t\n]+ /* Ignore comments and spaces */
 
-{WORD} return WORD;
+{WORD} {
+	yylval.word = yytext;
+	return WORD;
+}
+
+\<\< return DLESS;
+\>\> return DGREAT;
+\<& return LESSAND;
+\>& return GREATAND;
+\<\> return LESSGREAT;
+\<\<- return DLESSDASH;
+\>\| return CLOBBER;
 
 . return yytext[0];
