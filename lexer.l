@@ -10,4 +10,12 @@ WORD [[:alpha:]][[:alnum:]]*
 
 {WORD} return WORD;
 
+\<\< return DLESS;
+\>\> return DGREAT;
+\<& return LESSAND;
+\>& return GREATAND;
+\<\> return LESSGREAT;
+\<\<- return DLESSDASH;
+\>\| return CLOBBER;
+
 . return yytext[0];
