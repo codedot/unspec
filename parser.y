@@ -1,7 +1,12 @@
-%token WORD ASSIGNMENT_WORD NAME NEWLINE IO_NUMBER
-%token AND_IF OR_IF DSEMI
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH
-%token CLOBBER
+%union {
+	/* String type for WORD token et al */
+	char *str;
+}
+
+/* Tokens with value of string type */
+%token <str> WORD ASSIGNMENT_WORD IO_NUMBER
+/* Tokens without value */
+%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
 
 %%
 
