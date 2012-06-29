@@ -8,7 +8,11 @@ WORD [[:alpha:]][[:alnum:]]*
 
 #.*|[ \t\n]+ /* Ignore comments and spaces */
 
-{WORD} return WORD;
+{WORD} {
+	/* Token value is the matching string */
+	yylval.str = yytext;
+	return WORD;
+}
 
 \<\< return DLESS;
 \>\> return DGREAT;
