@@ -1,46 +1,64 @@
 %{
+#include "command.h"
+
 #include <stdio.h>
+#include <stdlib.h>
 %}
 
 %union {
-	/* String type for WORD token et al */
-	char *str;
+	int num;
+	char *word, **vec;
 }
 
-/* Tokens with value of string type */
-%token <str> WORD ASSIGNMENT_WORD IO_NUMBER
-/* Tokens without value */
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
+%token <num> IONUM LEGR GRGR LELE LELEDASH LEAND GRAND CLOBBER
+%token <word> WORD UNSPEC ASSIGN
 
 %%
 
-simple_command: cmd_name | cmd_name cmd_suffix | cmd_prefix |
-	cmd_prefix cmd_word | cmd_prefix cmd_word cmd_suffix;
-
-cmd_name: WORD {
-	printf("Command:\n\t%s\n", $1);
+command: prefix '\n' {
+	exit(EXIT_SUCCESS);
+} | prefix WORD suffix '\n' {
+	issuecmd($2, $<vec>3, $<vec>1);
 };
 
-cmd_word: WORD;
-
-cmd_prefix: io_redirect | cmd_prefix io_redirect |
-	ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD;
-
-cmd_suffix: io_redirect | cmd_suffix io_redirect | WORD {
-	printf("Arguments:\n\t%s\n", $1);
-} | cmd_suffix WORD {
-	printf("\t%s\n", $2);
+prefix: {
+	$<vec>$ = NULL;
+} | prefix redir | prefix UNSPEC {
+	unspec("XCU 2.10.2 7b");
+} | prefix ASSIGN {
+	$<vec>$ = addvar($<vec>1, $2);
 };
 
-io_redirect: io_file | IO_NUMBER io_file | io_here |
-	IO_NUMBER io_here;
+suffix: {
+	$<vec>$ = NULL;
+} | suffix redir | suffix arg {
+	$<vec>$ = addarg($<vec>1, $<word>2);
+};
 
-io_file: '<' filename | LESSAND filename | '>' filename |
-	GREATAND filename | DGREAT filename |
-	LESSGREAT filename | CLOBBER filename;
+arg: WORD | ASSIGN | UNSPEC;
 
-filename: WORD;
+redir: redirsym WORD {
+	openio(-1, $<num>1, $2);
+} | IONUM redirsym WORD {
+	openio($1, $<num>2, $3);
+};
 
-io_here: DLESS here_end | DLESSDASH here_end;
-
-here_end: WORD;
+redirsym: '<' {
+	$<num>$ = INPUT;
+} | LEGR {
+	$<num>$ = INOUTPUT;
+} | '>' {
+	$<num>$ = OUTPUT;
+} | GRGR {
+	$<num>$ = APPEND;
+} | CLOBBER {
+	$<num>$ = FORCEOUT;
+} | LELE {
+	$<num>$ = HEREDOC;
+} | LELEDASH {
+	$<num>$ = HEREIND;
+} | LEAND {
+	$<num>$ = DUPIN;
+} | GRAND {
+	$<num>$ = DUPOUT;
+};
