@@ -1,5 +1,10 @@
 YFLAGS = -d
 
+OBJS = \
+	lexer.o \
+	parser.o \
+	sh.o
+
 all: sh
 
 check: sh test
@@ -7,9 +12,13 @@ check: sh test
 		'./test hello <input.txt world' | ./sh
 	cmp output.txt expect.txt
 
-sh: parser.o lexer.o
+sh: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) -ly -ll
 
-lexer.o: parser.o
+lexer.o: y.tab.h
+
+y.tab.h: parser.o
 
 clean:
-	-rm -f y.* *.o sh test output.txt
+	-rm -f lexer.c parser.c y.*
+	-rm -f output.txt sh test *.o
