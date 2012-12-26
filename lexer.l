@@ -6,7 +6,7 @@ WORD [[:alpha:]][[:alnum:]]*
 
 %%
 
-#.*|[ \t\n]+ /* Ignore comments and spaces */
+#.*|[ \t\n]+ ;
 
 {WORD} {
 	/*
