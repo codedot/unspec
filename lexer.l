@@ -62,6 +62,12 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 <MAIN>{EMPTY}+ ;
 <MAIN>\n return NEWLINE;
 
+<MAIN>[0-9]+/[<>] {
+	yylval.str = yytext;
+
+	return IO_NUMBER;
+}
+
 <MAIN>{WORD} {
 	/*
 	 * The yylval variable represents the token value.
