@@ -1,5 +1,10 @@
 %{
 #include "y.tab.h"
+
+#include "command.h"
+
+#include <stdio.h>
+#include <string.h>
 %}
 
 CHAR ([^(<&|;>) "'\\\t\n])
@@ -68,7 +73,7 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 <MAIN>\n return NEWLINE;
 
 <MAIN>[0-9]+/[<>] {
-	yylval.str = yytext;
+	yylval.str = chkptr(strdup(yytext), "strdup");
 
 	return IO_NUMBER;
 }
@@ -85,8 +90,10 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 	 * In this particular case, the union has a field `str'
 	 * of type (char *), and we assign the string matching
 	 * the regular expression named WORD as the token value.
+	 * The string duplication is necessary due to yytext
+	 * possibly modified before the token reaches the parser.
 	 */
-	yylval.str = yytext;
+	yylval.str = chkptr(strdup(yytext), "strdup");
 
 	return WORD;
 }
