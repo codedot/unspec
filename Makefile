@@ -3,7 +3,8 @@ YFLAGS = -d
 OBJS = \
 	lexer.o \
 	parser.o \
-	sh.o
+	sh.o \
+	unspec.o
 
 all: sh
 
@@ -14,6 +15,8 @@ check: sh test
 
 sh: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) -ly -ll
+
+$(OBJS): command.h
 
 lexer.o: y.tab.h
 
