@@ -2,7 +2,12 @@
 #include "y.tab.h"
 %}
 
-WORD [[:alpha:]][[:alnum:]]*
+CHAR ([^(<&|;>) "'\\\t\n])
+ESC (\\[^\n])
+QUOTE ('[^']*')
+DQUOTE (\"([^"\\]|{LJ}|\\.)*\")
+LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE})
+WORD ({LITER}({LJ}{LITER})*)
 
 BLANK ([ \t])
 LJ ((\\\n)*)
