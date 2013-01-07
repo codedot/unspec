@@ -74,7 +74,7 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 
 <MAIN>[0-9]+/[<>] {
 	yylval.str = chkptr(strdup(yytext), "strdup");
-
+	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
 	return IO_NUMBER;
 }
 
@@ -94,7 +94,7 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 	 * possibly modified before the token reaches the parser.
 	 */
 	yylval.str = chkptr(strdup(yytext), "strdup");
-
+	fprintf(stderr, "WORD '%s'\n", yylval.str);
 	return WORD;
 }
 

@@ -150,9 +150,6 @@ simple_command   : cmd_prefix cmd_word cmd_suffix
                  | cmd_name
                  ;
 cmd_name         : WORD                   /* Apply rule 7a */
-{
-	printf("Command:\n\t%s\n", $1);
-}
                  ;
 cmd_word         : WORD                   /* Apply rule 7b */
                  ;
@@ -164,13 +161,7 @@ cmd_prefix       :            io_redirect
 cmd_suffix       :            io_redirect
                  | cmd_suffix io_redirect
                  |            WORD
-{
-	printf("Arguments:\n\t%s\n", $1);
-}
                  | cmd_suffix WORD
-{
-	printf("\t%s\n", $2);
-}
                  ;
 redirect_list    :               io_redirect
                  | redirect_list io_redirect
@@ -210,3 +201,7 @@ separator        : separator_op linebreak
 sequential_sep   : ';' linebreak
                  | newline_list
                  ;
+
+%%
+
+int yydebug = 1;
