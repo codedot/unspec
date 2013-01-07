@@ -86,12 +86,15 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 	return WORD;
 }
 
-<MAIN>\<\< return DLESS;
-<MAIN>\>\> return DGREAT;
-<MAIN>\<& return LESSAND;
-<MAIN>\>& return GREATAND;
-<MAIN>\<\> return LESSGREAT;
-<MAIN>\<\<- return DLESSDASH;
-<MAIN>\>\| return CLOBBER;
+<MAIN>"&"{LJ}"&" return AND_IF;
+<MAIN>"|"{LJ}"|" return OR_IF;
+<MAIN>";"{LJ}";" return DSEMI;
+<MAIN>"<"{LJ}"<"{LJ}"-" return DLESSDASH;
+<MAIN>"<"{LJ}"<" return DLESS;
+<MAIN>"<"{LJ}"&" return LESSAND;
+<MAIN>"<"{LJ}">" return LESSGREAT;
+<MAIN>">"{LJ}"&" return GREATAND;
+<MAIN>">"{LJ}"|" return CLOBBER;
+<MAIN>">"{LJ}">" return DGREAT;
 
 <MAIN>. return yytext[0];
