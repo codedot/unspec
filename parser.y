@@ -8,9 +8,16 @@
 }
 
 /* Tokens with value of string type */
-%token <str> WORD ASSIGNMENT_WORD IO_NUMBER
+%token <str> WORD ASSIGNMENT_WORD NAME IO_NUMBER
 /* Tokens without value */
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH CLOBBER
+%token NEWLINE
+/* Tokens that represent operators */
+%token AND_IF OR_IF DSEMI
+/*     '&&'   '||'  ';;' */
+%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH
+/*     '<<'  '>>'   '<&'    '>&'     '<>'      '<<-'   */
+%token CLOBBER
+/*     '>|'   */
 
 %%
 
