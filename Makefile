@@ -1,17 +1,14 @@
-YFLAGS = -d
+YFLAGS = -dtv
 
 OBJS = \
 	lexer.o \
 	parser.o \
-	sh.o \
 	unspec.o
 
-all: sh
+all: sh demo test.sh
+	./sh <test.sh
 
-check: sh test
-	echo 'FOO=bar >output.txt PATH=.:/bin' \
-		'./test hello <input.txt world' | ./sh
-	cmp output.txt expect.txt
+test.sh: expect.txt input.txt
 
 sh: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) -ly -ll
@@ -24,4 +21,4 @@ y.tab.h: parser.o
 
 clean:
 	-rm -f lexer.c parser.c y.*
-	-rm -f output.txt sh test *.o
+	-rm -f output.txt sh demo *.o
