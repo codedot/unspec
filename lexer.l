@@ -72,7 +72,7 @@ WORD ({LITER}({LJ}{LITER})*)
 <MAIN>{EMPTY}+ ;
 <MAIN>\n return NEWLINE;
 
-<MAIN>[0-9]+/[<>] {
+<MAIN>([0-9]{LJ})+/[<>] {
 	yylval.str = chkptr(strdup(yytext), "strdup");
 	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
 	return IO_NUMBER;
