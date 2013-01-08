@@ -7,17 +7,17 @@
 #include <string.h>
 %}
 
+BLANK ([ \t])
+LJ ((\\\n)*)
+COMMENT ("#".*)
+EMPTY ({BLANK}|{LJ}|{COMMENT})
+
 CHAR ([^(<&|;>) "'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 DQUOTE (\"([^"\\]|{LJ}|\\.)*\")
 LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE})
 WORD ({LITER}({LJ}{LITER})*)
-
-BLANK ([ \t])
-LJ ((\\\n)*)
-COMMENT ("#".*)
-EMPTY ({BLANK}|{LJ}|{COMMENT})
 
 %X MAIN
 
