@@ -7,17 +7,17 @@
 #include <string.h>
 %}
 
+BLANK ([ \t])
+LJ ((\\\n)*)
+COMMENT ("#".*)
+EMPTY ({BLANK}|{LJ}|{COMMENT})
+
 CHAR ([^(<&|;>) "'\\\t\n])
-ESC (\\[^\n])
+ESC (\\.)
 QUOTE ('[^']*')
 DQUOTE (\"([^"\\]|{LJ}|\\.)*\")
 LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE})
 WORD ({LITER}({LJ}{LITER})*)
-
-BLANK ([ \t])
-LJ ((\\\n)*)
-COMMENT ("#"[^\n]*)
-EMPTY ({BLANK}|{LJ}|{COMMENT})
 
 %X MAIN
 
@@ -72,7 +72,7 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 <MAIN>{EMPTY}+ ;
 <MAIN>\n return NEWLINE;
 
-<MAIN>[0-9]+/[<>] {
+<MAIN>([0-9]{LJ})+/[<>] {
 	yylval.str = chkptr(strdup(yytext), "strdup");
 	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
 	return IO_NUMBER;
