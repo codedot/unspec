@@ -12,16 +12,22 @@ LJ ((\\\n)*)
 COMMENT ("#".*)
 EMPTY ({BLANK}|{LJ}|{COMMENT})
 
-CHAR ([^(<&|;>) "'\\\t\n])
+NAME ([A-Za-z_]({LJ}[A-Za-z_0-9])*)
+PARAM ([0-9!$\-?#*@])
+PAREXP (${LJ}({PARAM}|{NAME}))
+
+CHAR ([^(<&|;>) $"'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
-DQUOTE (\"([^"\\]|{LJ}|{ESC}|{CMDQUOTE})*\")
-LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE})
+DQUOTE (\"([^"\\$]|{LJ}|{ESC}|{CMDQUOTE}|{PAREXP})*\")
+LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
 WORD ({LITER}({LJ}{LITER})*)
 
-%a 4000
-%p 7000
+%a 20000
+%n 2000
+%o 30000
+%p 30000
 
 %x MAIN
 
