@@ -15,12 +15,15 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 CHAR ([^(<&|;>) "'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
-DQUOTE (\"([^"\\]|{LJ}|{ESC})*\")
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
+DQUOTE (\"([^"\\]|{LJ}|{ESC}|{CMDQUOTE})*\")
 LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE})
 WORD ({LITER}({LJ}{LITER})*)
 
-%X MAIN
+%a 4000
+%p 7000
+
+%x MAIN
 
 %%
 
