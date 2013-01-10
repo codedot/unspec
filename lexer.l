@@ -15,7 +15,7 @@ EMPTY ({BLANK}|{LJ}|{COMMENT})
 CHAR ([^(<&|;>) "'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
-DQUOTE (\"([^"\\]|{LJ}|\\.)*\")
+DQUOTE (\"([^"\\]|{LJ}|{ESC})*\")
 LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE})
 WORD ({LITER}({LJ}{LITER})*)
 
