@@ -16,7 +16,8 @@ CHAR ([^(<&|;>) "'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 DQUOTE (\"([^"\\]|{LJ}|{ESC})*\")
-LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE})
+CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
+LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE})
 WORD ({LITER}({LJ}{LITER})*)
 
 %X MAIN
