@@ -81,6 +81,17 @@ WORD ({LITER}({LJ}{LITER})*)
 
 <MAIN>{EMPTY}+ ;
 <MAIN>\n return NEWLINE;
+<MAIN>"&"{LJ}"&" return AND_IF;
+<MAIN>"|"{LJ}"|" return OR_IF;
+<MAIN>";"{LJ}";" return DSEMI;
+<MAIN>"<"{LJ}"<"{LJ}"-" return DLESSDASH;
+<MAIN>"<"{LJ}"<" return DLESS;
+<MAIN>"<"{LJ}"&" return LESSAND;
+<MAIN>"<"{LJ}">" return LESSGREAT;
+<MAIN>">"{LJ}"&" return GREATAND;
+<MAIN>">"{LJ}"|" return CLOBBER;
+<MAIN>">"{LJ}">" return DGREAT;
+<MAIN>[(<&|;>)] return yytext[0];
 
 <MAIN>([0-9]{LJ})+/[<>] {
 	yylval.str = chkptr(strdup(yytext), "strdup");
@@ -108,15 +119,4 @@ WORD ({LITER}({LJ}{LITER})*)
 	return WORD;
 }
 
-<MAIN>"&"{LJ}"&" return AND_IF;
-<MAIN>"|"{LJ}"|" return OR_IF;
-<MAIN>";"{LJ}";" return DSEMI;
-<MAIN>"<"{LJ}"<"{LJ}"-" return DLESSDASH;
-<MAIN>"<"{LJ}"<" return DLESS;
-<MAIN>"<"{LJ}"&" return LESSAND;
-<MAIN>"<"{LJ}">" return LESSGREAT;
-<MAIN>">"{LJ}"&" return GREATAND;
-<MAIN>">"{LJ}"|" return CLOBBER;
-<MAIN>">"{LJ}">" return DGREAT;
-
-<MAIN>. return yytext[0];
+<MAIN>. unspec("XCU 2");
