@@ -16,14 +16,15 @@ NAME ([A-Za-z_]({LJ}[A-Za-z_0-9])*)
 PARAM ([0-9!$\-?#*@])
 PAREXP (${LJ}({PARAM}|{NAME}))
 
+QCHAR ([^"\\$])
 CHAR ([^(<&|;>) $"'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
-DQUOTE (\"([^"\\$]|{LJ}|{ESC}|{CMDQUOTE}|{PAREXP})*\")
-LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
+QLITER ({QCHAR}|{ESC}|{CMDQUOTE}|{PAREXP})
+LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 
-%X MAIN TOKEN
+%X MAIN QUOTED TOKEN
 
 %%
 
@@ -100,6 +101,17 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
 	yyless(0);
 }
 
+<TOKEN>{LJ}\" {
+	/*
+	 * Double-quoted field is to be handled under special
+	 * exclusive start condition called QUOTED.
+	 * A yymore() call makes the next token to be appended to
+	 * yytext variable rather than replacing its value.
+	 */
+	BEGIN QUOTED;
+	yymore();
+}
+
 <TOKEN>{LJ}{LITER}/[(<&|;>) \t\n] {
 	/*
 	 * The yylval variable represents the token value.
@@ -111,8 +123,7 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
 	 *
 	 * In this particular case, the union has a field `str'
 	 * of type (char *), and we assign the string accumulated
-	 * in the yytext buffer as the token value; see also
-	 * the comment on the yymore() routine call below.
+	 * in the yytext buffer as the token value.
 	 * The string duplication is necessary due to yytext
 	 * possibly modified before the token reaches the parser.
 	 */
@@ -122,14 +133,7 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
 	return WORD;
 }
 
-<TOKEN>{LJ}{LITER}/. {
-	/*
-	 * The current token is not to be delimited just yet.
-	 * A yymore() call makes the next token to be appended to
-	 * yytext variable rather than replacing its value.
-	 */
-	yymore();
-}
+<TOKEN>{LJ}{LITER}/. yymore();
 
 <TOKEN>{LJ}{LITER} {
 	/*
@@ -144,3 +148,28 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
 	fprintf(stderr, "WORD '%s'\n", yylval.str);
 	return WORD;
 }
+
+<QUOTED>{LJ}\"/[(<&|;>) \t\n] {
+	BEGIN MAIN;
+	yylval.str = chkptr(strdup(yytext), "strdup");
+	fprintf(stderr, "WORD '%s'\n", yylval.str);
+	return WORD;
+}
+
+<QUOTED>{LJ}\"/. {
+	/*
+	 * According to XCU 2.3, item #4, the token is not to be
+	 * delimited by the end of the quoted field.
+	 */
+	BEGIN TOKEN;
+	yymore();
+}
+
+<QUOTED>{LJ}\" {
+	BEGIN MAIN;
+	yylval.str = chkptr(strdup(yytext), "strdup");
+	fprintf(stderr, "WORD '%s'\n", yylval.str);
+	return WORD;
+}
+
+<QUOTED>{LJ}{QLITER} yymore();
