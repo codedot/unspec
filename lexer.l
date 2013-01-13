@@ -22,14 +22,8 @@ QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
 DQUOTE (\"([^"\\$]|{LJ}|{ESC}|{CMDQUOTE}|{PAREXP})*\")
 LITER ({CHAR}|{ESC}|{QUOTE}|{DQUOTE}|{CMDQUOTE}|{PAREXP})
-WORD ({LITER}({LJ}{LITER})*)
 
-%a 20000
-%n 2000
-%o 30000
-%p 30000
-
-%x MAIN
+%X MAIN TOKEN
 
 %%
 
@@ -81,33 +75,6 @@ WORD ({LITER}({LJ}{LITER})*)
 
 <MAIN>{EMPTY}+ ;
 <MAIN>\n return NEWLINE;
-
-<MAIN>([0-9]{LJ})+/[<>] {
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
-	return IO_NUMBER;
-}
-
-<MAIN>{WORD} {
-	/*
-	 * The yylval variable represents the token value.
-	 * This variable is external variable for the lexer
-	 * and is defined by the parser.
-	 * Technically this variable has the union type.
-	 * That union's fields are defined by the %union { ... }
-	 * statement in the parser.
-	 *
-	 * In this particular case, the union has a field `str'
-	 * of type (char *), and we assign the string matching
-	 * the regular expression named WORD as the token value.
-	 * The string duplication is necessary due to yytext
-	 * possibly modified before the token reaches the parser.
-	 */
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
-
 <MAIN>"&"{LJ}"&" return AND_IF;
 <MAIN>"|"{LJ}"|" return OR_IF;
 <MAIN>";"{LJ}";" return DSEMI;
@@ -118,5 +85,62 @@ WORD ({LITER}({LJ}{LITER})*)
 <MAIN>">"{LJ}"&" return GREATAND;
 <MAIN>">"{LJ}"|" return CLOBBER;
 <MAIN>">"{LJ}">" return DGREAT;
+<MAIN>[(<&|;>)] return yytext[0];
 
-<MAIN>. return yytext[0];
+<MAIN>([0-9]{LJ})+/[<>] {
+	/* XCU 2.10.1, item #3. */
+	yylval.str = chkptr(strdup(yytext), "strdup");
+	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
+	return IO_NUMBER;
+}
+
+<MAIN>. {
+	/* XCU 2.3, item #11. */
+	BEGIN TOKEN;
+	yyless(0);
+}
+
+<TOKEN>{LJ}{LITER}/[(<&|;>) \t\n] {
+	/*
+	 * The yylval variable represents the token value.
+	 * This variable is external variable for the lexer
+	 * and is defined by the parser.
+	 * Technically this variable has the union type.
+	 * That union's fields are defined by the %union { ... }
+	 * statement in the parser.
+	 *
+	 * In this particular case, the union has a field `str'
+	 * of type (char *), and we assign the string accumulated
+	 * in the yytext buffer as the token value; see also
+	 * the comment on the yymore() routine call below.
+	 * The string duplication is necessary due to yytext
+	 * possibly modified before the token reaches the parser.
+	 */
+	BEGIN MAIN;
+	yylval.str = chkptr(strdup(yytext), "strdup");
+	fprintf(stderr, "WORD '%s'\n", yylval.str);
+	return WORD;
+}
+
+<TOKEN>{LJ}{LITER}/. {
+	/*
+	 * The current token is not to be delimited just yet.
+	 * A yymore() call makes the next token to be appended to
+	 * yytext variable rather than replacing its value.
+	 */
+	yymore();
+}
+
+<TOKEN>{LJ}{LITER} {
+	/*
+	 * The end-of-file is a valid token delimiter;
+	 * see XCU 2.3 Token Recognition, item #1.
+	 * This action is assumed to be taken at the end
+	 * of input because niether of the previous regular
+	 * expressions matched the current input.
+	 */
+	BEGIN MAIN;
+	yylval.str = chkptr(strdup(yytext), "strdup");
+	fprintf(stderr, "WORD '%s'\n", yylval.str);
+	return WORD;
+}
