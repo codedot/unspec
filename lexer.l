@@ -12,19 +12,12 @@ LJ ((\\\n)*)
 COMMENT ("#".*)
 EMPTY ({BLANK}|{LJ}|{COMMENT})
 
-NAME ([A-Za-z_]({LJ}[A-Za-z_0-9])*)
-PARAM ([0-9!$\-?#*@])
-PAREXP (${LJ}({PARAM}|{NAME}))
-
-QCHAR ([^"\\$])
 CHAR ([^(<&|;>) $"'\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
-CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
-QLITER ({QCHAR}|{ESC}|{CMDQUOTE}|{PAREXP})
-LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
+LITER ({CHAR}|{ESC}|{QUOTE})
 
-%X MAIN QUOTED TOKEN
+%X MAIN TOKEN
 
 %%
 
@@ -86,7 +79,7 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 <MAIN>">"{LJ}"&" return GREATAND;
 <MAIN>">"{LJ}"|" return CLOBBER;
 <MAIN>">"{LJ}">" return DGREAT;
-<MAIN>[(<&|;>)] return yytext[0];
+<MAIN>[$"`(<&|;>)] return yytext[0];
 
 <MAIN>([0-9]{LJ})+/[<>] {
 	/* XCU 2.10.1, item #3. */
@@ -101,18 +94,7 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 	yyless(0);
 }
 
-<TOKEN>{LJ}\" {
-	/*
-	 * Double-quoted field is to be handled under special
-	 * exclusive start condition called QUOTED.
-	 * A yymore() call makes the next token to be appended to
-	 * yytext variable rather than replacing its value.
-	 */
-	BEGIN QUOTED;
-	yymore();
-}
-
-<TOKEN>{LJ}{LITER}/[(<&|;>) \t\n] {
+<TOKEN>{LJ}{LITER}/[$"`(<&|;>) \t\n] {
 	/*
 	 * The yylval variable represents the token value.
 	 * This variable is external variable for the lexer
@@ -148,28 +130,3 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 	fprintf(stderr, "WORD '%s'\n", yylval.str);
 	return WORD;
 }
-
-<QUOTED>{LJ}\"/[(<&|;>) \t\n] {
-	BEGIN MAIN;
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
-
-<QUOTED>{LJ}\"/. {
-	/*
-	 * According to XCU 2.3, item #4, the token is not to be
-	 * delimited by the end of the quoted field.
-	 */
-	BEGIN TOKEN;
-	yymore();
-}
-
-<QUOTED>{LJ}\" {
-	BEGIN MAIN;
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
-
-<QUOTED>{LJ}{QLITER} yymore();
