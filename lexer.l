@@ -17,7 +17,7 @@ ESC (\\.)
 QUOTE ('[^']*')
 LITER ({CHAR}|{ESC}|{QUOTE})
 
-%X MAIN TOKEN
+%X MAIN
 
 %%
 
@@ -88,13 +88,7 @@ LITER ({CHAR}|{ESC}|{QUOTE})
 	return IO_NUMBER;
 }
 
-<MAIN>. {
-	/* XCU 2.3, item #11. */
-	BEGIN TOKEN;
-	yyless(0);
-}
-
-<TOKEN>{LJ}{LITER}/[$"`(<&|;>) \t\n] {
+<MAIN>({LITER}{LJ})+ {
 	/*
 	 * The yylval variable represents the token value.
 	 * This variable is external variable for the lexer
@@ -108,24 +102,10 @@ LITER ({CHAR}|{ESC}|{QUOTE})
 	 * in the yytext buffer as the token value.
 	 * The string duplication is necessary due to yytext
 	 * possibly modified before the token reaches the parser.
-	 */
-	BEGIN MAIN;
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
-
-<TOKEN>{LJ}{LITER}/. yymore();
-
-<TOKEN>{LJ}{LITER} {
-	/*
+	 *
 	 * The end-of-file is a valid token delimiter;
 	 * see XCU 2.3 Token Recognition, item #1.
-	 * This action is assumed to be taken at the end
-	 * of input because neither of the previous regular
-	 * expressions matched the current input.
 	 */
-	BEGIN MAIN;
 	yylval.str = chkptr(strdup(yytext), "strdup");
 	fprintf(stderr, "WORD '%s'\n", yylval.str);
 	return WORD;
