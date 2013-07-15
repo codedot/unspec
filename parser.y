@@ -47,7 +47,7 @@
    The Grammar
    ------------------------------------------------------- */
 commands         : commands complete_command
-                 | /* empty */
+                 | linebreak
                  ;
 complete_command : list separator
                  | list
