@@ -5,10 +5,9 @@ OBJS = \
 	parser.o \
 	unspec.o
 
-all: sh demo test.sh
+all: sh test.sh demo input.txt expect.txt
 	./sh <test.sh
-
-test.sh: expect.txt input.txt
+	-diff -u output.txt expect.txt
 
 sh: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) -ly -ll
