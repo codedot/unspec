@@ -46,9 +46,6 @@
 /* -------------------------------------------------------
    The Grammar
    ------------------------------------------------------- */
-commands         : commands complete_command
-                 | linebreak
-                 ;
 complete_command : list separator
                  | list
                  ;
@@ -68,7 +65,7 @@ pipe_sequence    :                             command
 command          : simple_command
                  | compound_command
                  | compound_command redirect_list
-                 | function_definition
+                 | function_def
                  ;
 compound_command : brace_group
                  | subshell
@@ -109,10 +106,10 @@ case_list_ns     : case_list case_item_ns
 case_list        : case_list case_item
                  |           case_item
                  ;
-case_item_ns     :     pattern ')'               linebreak
-                 |     pattern ')' compound_list linebreak
-                 | '(' pattern ')'               linebreak
-                 | '(' pattern ')' compound_list linebreak
+case_item_ns     :     pattern ')' linebreak
+                 |     pattern ')' compound_list
+                 | '(' pattern ')' linebreak
+                 | '(' pattern ')' compound_list
                  ;
 case_item        :     pattern ')' linebreak     DSEMI linebreak
                  |     pattern ')' compound_list DSEMI linebreak
@@ -125,14 +122,15 @@ pattern          :             WORD         /* Apply rule 4 */
 if_clause        : If compound_list Then compound_list else_part Fi
                  | If compound_list Then compound_list           Fi
                  ;
-else_part        : Elif compound_list Then else_part
+else_part        : Elif compound_list Then compound_list
+                 | Elif compound_list Then compound_list else_part
                  | Else compound_list
                  ;
 while_clause     : While compound_list do_group
                  ;
 until_clause     : Until compound_list do_group
                  ;
-function_definition : fname '(' ')' linebreak function_body
+function_def     : fname '(' ')' linebreak function_body
                  ;
 function_body    : compound_command                /* Apply rule 9 */
                  | compound_command redirect_list  /* Apply rule 9 */
