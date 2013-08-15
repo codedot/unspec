@@ -106,10 +106,10 @@ case_list_ns     : case_list case_item_ns
 case_list        : case_list case_item
                  |           case_item
                  ;
-case_item_ns     :     pattern ')'               linebreak
-                 |     pattern ')' compound_list linebreak
-                 | '(' pattern ')'               linebreak
-                 | '(' pattern ')' compound_list linebreak
+case_item_ns     :     pattern ')' linebreak
+                 |     pattern ')' compound_list
+                 | '(' pattern ')' linebreak
+                 | '(' pattern ')' compound_list
                  ;
 case_item        :     pattern ')' linebreak     DSEMI linebreak
                  |     pattern ')' compound_list DSEMI linebreak
