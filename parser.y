@@ -47,6 +47,9 @@
    The Grammar
    ------------------------------------------------------- */
 
+script           : linebreak
+                 | compound_list
+                 ;
 compound_list    : linebreak term
                  | linebreak term separator
                  ;
