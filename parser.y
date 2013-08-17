@@ -77,10 +77,8 @@ compound_command : brace_group
                  ;
 subshell         : '(' compound_list ')'
                  ;
-compound_list    :              term
-                 | newline_list term
-                 |              term separator
-                 | newline_list term separator
+compound_list    : linebreak term
+                 | linebreak term separator
                  ;
 term             : term separator and_or
                  |                and_or
