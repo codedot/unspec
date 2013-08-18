@@ -47,14 +47,17 @@
    The Grammar
    ------------------------------------------------------- */
 
-script           : linebreak
-                 | compound_list
+script           : commands linebreak
+                 | /* empty */
                  ;
-compound_list    : linebreak term
-                 | linebreak term separator
+commands         : commands newline_list complete_command
+                 |                       complete_command
                  ;
-term             : term separator and_or
-                 |                and_or
+complete_command : list separator_op
+                 | list
+                 ;
+list             : list separator_op and_or
+                 |                   and_or
                  ;
 and_or           :                         pipeline
                  | and_or AND_IF linebreak pipeline
@@ -80,6 +83,12 @@ compound_command : brace_group
                  | until_clause
                  ;
 subshell         : '(' compound_list ')'
+                 ;
+compound_list    : linebreak term
+                 | linebreak term separator
+                 ;
+term             : term separator and_or
+                 |                and_or
                  ;
 for_clause       : For name linebreak                            do_group
                  | For name linebreak in          sequential_sep do_group
