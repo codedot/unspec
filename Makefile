@@ -7,7 +7,6 @@ OBJS = \
 
 all: sh test.sh demo input.txt expect.txt
 	./sh <test.sh
-	-diff -u output.txt expect.txt
 
 sh: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) -ly -ll

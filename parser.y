@@ -47,8 +47,8 @@
    The Grammar
    ------------------------------------------------------- */
 
-script           : commands linebreak
-                 | /* empty */
+script           : linebreak commands linebreak
+                 | linebreak
                  ;
 commands         : commands newline_list complete_command
                  |                       complete_command
