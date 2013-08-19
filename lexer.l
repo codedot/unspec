@@ -19,15 +19,11 @@ LJ ((\\\n)*)
 COMMENT ("#".*)
 EMPTY ({BLANK}|{LJ}|{COMMENT})
 
-NAME ([A-Za-z_]({LJ}[A-Za-z_0-9])*)
-PARAM ([0-9!$\-?#*@])
-PAREXP (${LJ}({PARAM}|{NAME}))
-
-CHAR ([^(<&|;>) $"'`\\\t\n])
+CHAR ([^(<&|;>) "'`\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
-LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
+LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE})
 
 %%
 
