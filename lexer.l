@@ -5,6 +5,13 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#define TOKENIZE(TOKEN) \
+	do { \
+		yylval.str = chkptr(strdup(yytext), "strdup"); \
+		fprintf(stderr, #TOKEN " '%s'\n", yylval.str); \
+		return TOKEN; \
+	} while (0)
 %}
 
 BLANK ([ \t])
@@ -39,15 +46,5 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 ">"{LJ}">" return DGREAT;
 [(<&|;>)] return yytext[0];
 
-([0-9]{LJ})+/[<>] {
-	/* XCU 2.10.1, item #3. */
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "IO_NUMBER '%s'\n", yylval.str);
-	return IO_NUMBER;
-}
-
-{LITER}({LJ}{LITER})* {
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
+([0-9]{LJ})+/[<>] TOKENIZE(IO_NUMBER);
+{LITER}({LJ}{LITER})* TOKENIZE(WORD);
