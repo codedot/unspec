@@ -23,7 +23,7 @@ NAME ([A-Za-z_]({LJ}[A-Za-z_0-9])*)
 PARAM ([0-9!$\-?#*@])
 PAREXP (${LJ}({PARAM}|{NAME}))
 
-CHAR ([^(<&|;>) $"'\\\t\n])
+CHAR ([^(<&|;>) $"'`\\\t\n])
 ESC (\\.)
 QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
@@ -44,7 +44,8 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 ">"{LJ}"&" return GREATAND;
 ">"{LJ}"|" return CLOBBER;
 ">"{LJ}">" return DGREAT;
-[(<&|;>)] return yytext[0];
 
 ([0-9]{LJ})+/[<>] TOKENIZE(IO_NUMBER);
 {LITER}({LJ}{LITER})* TOKENIZE(WORD);
+
+. return yytext[0];
