@@ -1,3 +1,4 @@
+LFLAGS = -v
 YFLAGS = -dtv
 
 OBJS = \
