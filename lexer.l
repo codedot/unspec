@@ -22,8 +22,6 @@ QUOTE ('[^']*')
 CMDQUOTE (`([^`\\]|{LJ}|{ESC})*`)
 LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 
-%X TOKEN
-
 %%
 
 {EMPTY}+ ;
@@ -48,44 +46,7 @@ LITER ({CHAR}|{ESC}|{QUOTE}|{CMDQUOTE}|{PAREXP})
 	return IO_NUMBER;
 }
 
-. {
-	/* XCU 2.3, item #11. */
-	BEGIN TOKEN;
-	yyless(0);
-}
-
-<TOKEN>{LJ}{LITER}/[(<&|;>) \t\n] {
-	/*
-	 * The yylval variable represents the token value.
-	 * This variable is external variable for the lexer
-	 * and is defined by the parser.
-	 * Technically this variable has the union type.
-	 * That union's fields are defined by the %union { ... }
-	 * statement in the parser.
-	 *
-	 * In this particular case, the union has a field `str'
-	 * of type (char *), and we assign the string accumulated
-	 * in the yytext buffer as the token value.
-	 * The string duplication is necessary due to yytext
-	 * possibly modified before the token reaches the parser.
-	 */
-	BEGIN INITIAL;
-	yylval.str = chkptr(strdup(yytext), "strdup");
-	fprintf(stderr, "WORD '%s'\n", yylval.str);
-	return WORD;
-}
-
-<TOKEN>{LJ}{LITER}/. yymore();
-
-<TOKEN>{LJ}{LITER} {
-	/*
-	 * The end-of-file is a valid token delimiter;
-	 * see XCU 2.3 Token Recognition, item #1.
-	 * This action is assumed to be taken at the end
-	 * of input because neither of the previous regular
-	 * expressions matched the current input.
-	 */
-	BEGIN INITIAL;
+{LITER}({LJ}{LITER})* {
 	yylval.str = chkptr(strdup(yytext), "strdup");
 	fprintf(stderr, "WORD '%s'\n", yylval.str);
 	return WORD;
