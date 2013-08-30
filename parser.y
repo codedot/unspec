@@ -10,48 +10,61 @@
 /* -------------------------------------------------------
    The grammar symbols
    ------------------------------------------------------- */
+%token  WORD
+%token  ASSIGNMENT_WORD
+%token  NAME
+%token  NEWLINE
+%token  IO_NUMBER
 
-/* Tokens with value of string type */
-%token <str> WORD ASSIGNMENT_WORD NAME IO_NUMBER
 
-/* Tokens without value */
-%token NEWLINE
-/* Tokens that represent operators */
-%token AND_IF OR_IF DSEMI
-/*     '&&'   '||'  ';;' */
-%token DLESS DGREAT LESSAND GREATAND LESSGREAT DLESSDASH
-/*     '<<'  '>>'   '<&'    '>&'     '<>'      '<<-'   */
-%token CLOBBER
-/*     '>|'   */
+/* The following are the operators mentioned above. */
+
+
+%token  AND_IF    OR_IF    DSEMI
+/*      '&&'      '||'     ';;'    */
+
+
+%token  DLESS  DGREAT  LESSAND  GREATAND  LESSGREAT  DLESSDASH
+/*      '<<'   '>>'    '<&'     '>&'      '<>'       '<<-'   */
+
+
+%token  CLOBBER
+/*      '>|'   */
+
 
 /* The following are the reserved words. */
+
 
 %token  If    Then    Else    Elif    Fi    Do    Done
 /*      'if'  'then'  'else'  'elif'  'fi'  'do'  'done'   */
 
+
 %token  Case    Esac    While    Until    For
 /*      'case'  'esac'  'while'  'until'  'for'   */
+
 
 /* These are reserved words, not operator tokens, and are
    recognized when reserved words are recognized. */
 
+
 %token  Lbrace    Rbrace    Bang
 /*      '{'       '}'       '!'   */
+
 
 %token  In
 /*      'in'   */
 
-%%
 
 /* -------------------------------------------------------
    The Grammar
    ------------------------------------------------------- */
-
-script           : linebreak commands linebreak
+%start program
+%%
+program          : linebreak complete_commands linebreak
                  | linebreak
                  ;
-commands         : commands newline_list complete_command
-                 |                       complete_command
+complete_commands: complete_commands newline_list complete_command
+                 |                                complete_command
                  ;
 complete_command : list separator_op
                  | list
@@ -72,7 +85,7 @@ pipe_sequence    :                             command
 command          : simple_command
                  | compound_command
                  | compound_command redirect_list
-                 | function_def
+                 | function_definition
                  ;
 compound_command : brace_group
                  | subshell
@@ -135,7 +148,7 @@ while_clause     : While compound_list do_group
                  ;
 until_clause     : Until compound_list do_group
                  ;
-function_def     : fname '(' ')' linebreak function_body
+function_definition : fname '(' ')' linebreak function_body
                  ;
 function_body    : compound_command                /* Apply rule 9 */
                  | compound_command redirect_list  /* Apply rule 9 */
