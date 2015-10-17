@@ -17,7 +17,8 @@
 %token  IO_NUMBER
 
 
-/* The following are the operators mentioned above. */
+/* The following are the operators (see XBD Section 3.260)
+   containing more than one character. */
 
 
 %token  AND_IF    OR_IF    DSEMI
@@ -103,7 +104,8 @@ compound_list    : linebreak term
 term             : term separator and_or
                  |                and_or
                  ;
-for_clause       : For name linebreak                            do_group
+for_clause       : For name                                      do_group
+                 | For name                       sequential_sep do_group
                  | For name linebreak in          sequential_sep do_group
                  | For name linebreak in wordlist sequential_sep do_group
                  ;
