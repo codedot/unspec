@@ -17,8 +17,9 @@
 %token  IO_NUMBER
 
 
-/* The following are the operators (see XBD Section 3.260)
+/* The following are the operators (see XBD Operator)
    containing more than one character. */
+
 
 
 %token  AND_IF    OR_IF    DSEMI
